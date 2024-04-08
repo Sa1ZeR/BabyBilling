@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: callgenerator
+
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      bootstrap-servers: localhost:9092 #?????? ???????? ????????
+      cdr-generator-topic-name: "cdr-generator-topic"
