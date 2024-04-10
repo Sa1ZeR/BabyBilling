@@ -19,7 +19,7 @@ public class KafkaConfig {
         return TopicBuilder.name(cdrTopic)
                 .partitions(3)
                 .replicas(3)
-                .configs(Map.of("min.insync.replaces", "2")) //число реплик, которые должны быть синхронизированы
+                .configs(Map.of("min.insync.replicas", "2")) //число реплик, которые должны быть синхронизированы
                 .build();
     }
 }
