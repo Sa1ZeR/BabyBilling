@@ -1,10 +1,14 @@
 package com.nexign.babybilling.callgenerator.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.KeyScanOptions;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +29,7 @@ public class RedisLock {
 
         //если запись есть, то надо проверить ее состояние
         if(expiredLock != null) {
-            if(endDate > expiredLock) releaseLock(lockKey); //если блокировка просрочена, то удаляем
+            if(endDate > expiredLock) releaseLock(key); //если блокировка просрочена, то удаляем
             else return false; //в противном случае такой объект заблокировать нельзя
         }
 
@@ -44,7 +48,24 @@ public class RedisLock {
         return Optional.ofNullable(redisTemplate.delete(lockKey)).orElse(false);
     }
 
+    /**
+     * Удаляет все ключи по переданному префексу
+     * @param prefix префикс ключа
+     */
+    public void releaseAllLocks(String prefix) {
+        try (RedisConnection redisConnection = redisTemplate.getConnectionFactory().getConnection()) {
+            ScanOptions options = KeyScanOptions.scanOptions().match("*" + prefix + "*").build(); //маска, в начале есть спец символы, поэтому используем * в начале
+
+            try(Cursor<byte[]> c = redisConnection.keyCommands().scan(options)) {
+                while (c.hasNext()) {
+                    System.out.println(new String(c.next()));
+                    redisConnection.keyCommands().del(c.next());
+                }
+            }
+        }
+    }
+
     private String getLockKey(String key) {
-        return String.format("key:%s", key);
+        return String.format("lock:%s", key);
     }
 }

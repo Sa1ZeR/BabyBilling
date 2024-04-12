@@ -1,13 +1,8 @@
-package com.nexign.babybilling.callgenerator.config;
+package com.nexign.babybilling.cdrservice.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -17,34 +12,11 @@ import java.util.Random;
 @Configuration
 public class MvcConfig {
 
-    @Value("${spring.data.redis.host}")
-    private String redisHost;
-    @Value("${spring.data.redis.port}")
-    private int redisPort;
-
 
     @Bean
     public Random random() {
         return new Random();
     }
-
-    @Bean
-    JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName(redisHost);
-        redisStandaloneConfiguration.setPort(redisPort);
-
-        return new JedisConnectionFactory(redisStandaloneConfiguration);
-    }
-
-    @Bean
-    public <F, S> RedisTemplate<F, S> redisTemplate(JedisConnectionFactory factory) {
-        RedisTemplate<F, S> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(factory);
-
-        return redisTemplate;
-    }
-
     /**
      * создание абонентов разных операторов
      * @return список абонентов, 955 - код оператора ромашка

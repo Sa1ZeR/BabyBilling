@@ -1,6 +1,5 @@
 package com.nexign.babybilling.callgenerator.services;
 
-import com.nexign.babybilling.callgenerator.repository.CdrRepository;
 import com.nexign.babybilling.payload.dto.CallType;
 import com.nexign.babybilling.payload.dto.CdrDto;
 import com.nexign.babybilling.utils.TimeUtils;
@@ -26,16 +25,17 @@ public class CdrGeneratorService {
      * @param currentTime - время начала звонка
      * @return cdr запись
      */
-    public CdrDto generateCdrRecord(LocalDateTime currentTime) {
+    public Optional<CdrDto> generateCdrRecord(LocalDateTime currentTime) {
         int duration = random.nextInt(3600); //продолжительность звонка
         LocalDateTime endTime = currentTime.plusSeconds(duration);
         CallType callType = CallType.values()[random.nextInt(CallType.values().length)]; //тип звонка
         long unixTimeStart = TimeUtils.toUnixTime(currentTime);
         long unixTimeEnd = TimeUtils.toUnixTime(endTime);
-        String user1 = getFreeUser(unixTimeEnd);
-        String user2 = getFreeUser(unixTimeEnd);
+        Optional<String> user1 = getFreeUser(unixTimeEnd);
+        Optional<String> user2 = getFreeUser(unixTimeEnd);
+        if(user2.isEmpty() || user1.isEmpty()) return Optional.empty();
 
-        return new CdrDto(callType, user1, unixTimeStart, unixTimeEnd, user2);
+        return Optional.of(new CdrDto(callType, user1.get(), unixTimeStart, unixTimeEnd, user2.get()));
     }
 
     /**
@@ -43,15 +43,21 @@ public class CdrGeneratorService {
      * @param unixTimeEnd - время окончания разговора
      * @return абонент
      */
-    private String getFreeUser(long unixTimeEnd) {
-        while (true) {
+    private Optional<String> getFreeUser(long unixTimeEnd) {
+        int tryCount = 0; //количество попыток
+
+        while (tryCount < 15) { //если за 15 попыток все абоненты заняты, то возвращаем пустого абонента
             //получаем любой номер
             String userTmp = allUsers.get(random.nextInt(allUsers.size()));
 
             //проверка - находится ли пользователь в кеше.
             //Так мы фиксируем абонентов, которые в данный момент уже разговаривают и мы не можем их использовать для генерации
             if(redisLock.acquireLock(userTmp, unixTimeEnd))
-                return userTmp;
+                return Optional.ofNullable(userTmp);
+
+            tryCount++;
         }
+
+        return Optional.empty();
     }
 }
