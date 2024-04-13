@@ -1,0 +1,12 @@
+server:
+  port: 3000
+
+spring:
+  application:
+    name: eureka-server
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: 'http://localhost:3000/eureka' #url for publishing microservers
