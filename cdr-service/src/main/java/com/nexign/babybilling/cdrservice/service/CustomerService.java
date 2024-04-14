@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,5 +36,9 @@ public class CustomerService {
             return customerRepo.save(build);
         }
         return byPhone.get();
+    }
+
+    public List<Customer> findAll() {
+        return customerRepo.findAll();
     }
 }

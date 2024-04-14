@@ -1,0 +1,13 @@
+server:
+  port: 3004
+
+spring:
+  application:
+    name: crm-service
+
+eureka:
+  client:
+    service-url:
+      defaultZone: 'http://localhost:3000/eureka'
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
