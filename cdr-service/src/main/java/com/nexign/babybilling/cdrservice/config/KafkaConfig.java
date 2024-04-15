@@ -30,7 +30,7 @@ public class KafkaConfig {
     @Bean
     public NewTopic cdrFileTopic() {
         return TopicBuilder.name(kafkaProducerProperty.cdrFileTopic)
-                .partitions(3)
+                .partitions(1)
                 .replicas(Integer.parseInt(kafkaProducerProperty.syncReplicas))
                 .configs(Map.of("min.insync.replicas", String.valueOf(Math.max(Integer.parseInt(kafkaProducerProperty.syncReplicas)-1, 1)))) //число реплик, которые должны быть синхронизированы
                 .build();

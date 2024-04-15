@@ -17,3 +17,10 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+eureka:
+  client:
+    service-url:
+      defaultZone: 'http://localhost:3000/eureka'
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
