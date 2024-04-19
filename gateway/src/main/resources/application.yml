@@ -5,6 +5,10 @@ spring:
     name: gateway
   cloud:
     gateway:
+      httpserver:
+        wiretap: true
+      httpclient:
+        wiretap: true
       discovery:
         locator:
           enabled: true

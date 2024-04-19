@@ -1,9 +1,26 @@
 server:
+  error:
+    include-message: always
   port: 3004
 
 spring:
   application:
     name: crm-service
+
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      crm-event-topic: 'crm-event-topic'
+      min-insync-replicas: 1
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: "all"
+
+jwt:
+  duration: 86400 #в секундах
+
+security:
+  cors-ip: localhost:${server.port}
 
 eureka:
   client:
