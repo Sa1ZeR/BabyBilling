@@ -41,10 +41,10 @@ public class CronService {
     /**
      * Данный метод генерирует cdr записи и отправляет их в шину
      */
-    @Scheduled(fixedDelay = 50L)
+    @Scheduled(fixedDelay = 10L)
     public void generateCdr() {
-        if(timeForBabyBilling.get().getYear() == 2025) {
-            log.info("Наступил 2025 год. Запустите тарификацию еще раз");
+        if(timeForBabyBilling.get().getYear() >= 2025) {
+            log.info("Наступил {} год. Запустите тарификацию еще раз", timeForBabyBilling.get().getYear());
             return;
         }
 
@@ -65,7 +65,7 @@ public class CronService {
                     RecordMetadata recordMetadata = send.get().getRecordMetadata();
                     log.info("Successfully write {} to {}-{}", cdrDto.get(), recordMetadata.topic(), recordMetadata.partition());
                 } catch (InterruptedException | ExecutionException e) {
-                    throw new RuntimeException(e);
+                    log.error("Error while generating cdr data", e);
                 }
             });
             timeForBabyBilling.set(timeForBabyBilling.get().plus(random.nextInt(50), ChronoUnit.MILLIS)); //вычисление погрешности

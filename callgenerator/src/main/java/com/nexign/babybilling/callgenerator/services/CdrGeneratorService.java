@@ -29,8 +29,10 @@ public class CdrGeneratorService {
         int duration = random.nextInt(3600); //продолжительность звонка
         LocalDateTime endTime = currentTime.plusSeconds(duration);
         CallType callType = CallType.values()[random.nextInt(CallType.values().length)]; //тип звонка
+
         long unixTimeStart = TimeUtils.toUnixTime(currentTime);
         long unixTimeEnd = TimeUtils.toUnixTime(endTime);
+
         Optional<String> user1 = getFreeUser(unixTimeEnd);
         Optional<String> user2 = getFreeUser(unixTimeEnd);
         if(user2.isEmpty() || user1.isEmpty()) return Optional.empty();
@@ -51,7 +53,8 @@ public class CdrGeneratorService {
             String userTmp = allUsers.get(random.nextInt(allUsers.size()));
 
             //проверка - находится ли пользователь в кеше.
-            //Так мы фиксируем абонентов, которые в данный момент уже разговаривают и мы не можем их использовать для генерации
+            //Так мы фиксируем абонентов, которые в данный момент уже разговаривают и мы не можем их использовать для генерации,
+            // фича работает даже если мы будем масштабировать горизонтально данный сервис
             if(redisLock.acquireLock(userTmp, unixTimeEnd))
                 return Optional.ofNullable(userTmp);
 
