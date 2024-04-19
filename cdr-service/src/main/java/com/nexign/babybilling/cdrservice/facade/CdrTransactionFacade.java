@@ -26,8 +26,8 @@ public class CdrTransactionFacade {
         //добавляем в буффер, так как чтение из партиций может идти не в хронологическом порядке
         cdrBufferService.addToBuffer(cdrDto);
 
-        Customer customer1 = customerService.findOrCreateCustomer(cdrDto.phone1());
-        Customer customer2 = customerService.findOrCreateCustomer(cdrDto.phone2());
+        Customer customer1 = customerService.findOrCreateCustomer(cdrDto.servedMsisnd());
+        Customer customer2 = customerService.findOrCreateCustomer(cdrDto.contactedMsisnd());
 
         callTransactionService.save(cdrDto, customer1, customer2);
     }

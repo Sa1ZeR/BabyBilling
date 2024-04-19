@@ -20,7 +20,7 @@ public class CronService {
     /**
      * Создание файлов из cdr записи и последующая отправка в brt
      */
-    @Scheduled(fixedDelay = 100L)
+    @Scheduled(fixedDelay = 25L)
     public void cdrFileCron() {
         List<CdrDto> cdrs = cdrBufferService.getFromBuffer(10);
 

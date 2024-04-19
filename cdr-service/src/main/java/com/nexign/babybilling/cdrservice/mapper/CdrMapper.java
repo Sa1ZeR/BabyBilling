@@ -10,6 +10,6 @@ public class CdrMapper implements Mapper<CdrDto, String> {
     @Override
     public String map(CdrDto from) {
         return String.format("%s,%s,%s,%s,%s",
-                from.callType().getCode(), from.phone1(), from.dateStart(), from.dateEnd(), from.phone2());
+                from.callType().getCode(), from.servedMsisnd(), from.dateStart(), from.dateEnd(), from.contactedMsisnd());
     }
 }
