@@ -2,10 +2,27 @@ spring:
   application:
     name: brt-service
 
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        hbm2ddl:
+          import_files:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+        format_sql: true
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:bootcamp24}
+    username: ${POSTGRES_NAME:postgres}
+    password: ${POSTGRES_PASSWORD:123456}
+
   kafka:
     topics:
       cdr-file-topic: 'cdr-file-topic'
       calculation-topic: 'calc-topic'
+      crm-event-topic: 'crm-event-topic'
     producer:
       bootstrap-servers: localhost:9092
       min-insync-replicas: 1
@@ -15,11 +32,16 @@ spring:
     consumer:
       bootstrap-servers: localhost:9092 #список серверов кластера
       cdr-generator-topic-name: "cdr-generator-topic"
-      #value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      #key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
       group-id: "cdr-group"
       trust-packages: "*"
   data:
     redis:
       host: localhost
       port: 6379
+
+eureka:
+  client:
+    service-url:
+      defaultZone: 'http://localhost:3000/eureka'
+  instance:
+    instance-id: ${spring.application.name}:${random.value}

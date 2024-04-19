@@ -12,8 +12,8 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@KafkaListener(topics = {"${spring.kafka.topics.cdr-file-topic}"}, containerFactory = "concurrentKafkaListenerContainerFactory")
-public class KafkaEventHandler {
+//@KafkaListener(topics = {"${spring.kafka.topics.cdr-file-topic}"}, containerFactory = "concurrentKafkaListenerContainerFactory")
+public class CdrEventHandler {
 
     private final BrtService brtService;
 

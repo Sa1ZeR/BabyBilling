@@ -7,4 +7,5 @@ include 'hrs-service'
 include 'brt-service'
 include 'eureka-server'
 include 'crm-service'
+include 'gateway'
 

@@ -1,9 +1,8 @@
 package com.nexign.babybilling.brtservice.service;
 
 import com.nexign.babybilling.brtservice.config.property.KafkaProducerProperty;
-import com.nexign.babybilling.brtservice.entity.Customer;
 import com.nexign.babybilling.brtservice.mapper.CdrMapper;
-import com.nexign.babybilling.brtservice.mapper.TariffMapper;
+import com.nexign.babybilling.brtservice.mapper.CustomerTariffMapper;
 import com.nexign.babybilling.brtservice.repo.projection.CustomerTariffProjection;
 import com.nexign.babybilling.payload.dto.CdrDto;
 import com.nexign.babybilling.payload.dto.CdrPlusEvent;
@@ -25,7 +24,7 @@ public class BrtService {
 
     private final CustomerService customerService;
     private final CdrMapper cdrMapper;
-    private final TariffMapper tariffMapper;
+    private final CustomerTariffMapper customerTariffMapper;
     private final KafkaTemplate<Long, CdrPlusEvent> kafkaTemplate;
     private final KafkaProducerProperty producerProperty;
 
@@ -57,8 +56,8 @@ public class BrtService {
         List<CdrPlusEvent> list = new ArrayList<>();
 
         for(CdrDto cdr : data) {
-            String phone1 = cdr.phone1(); //первый абонент
-            String phone2 = cdr.phone2(); //Второй абонент
+            String phone1 = cdr.servedMsisnd(); //первый абонент
+            String phone2 = cdr.contactedMsisnd(); //Второй абонент
 
             //получаем информацию о абоненте и его тарифе, если данные не получены, то данный абонент не является оператором ромашки
             Optional<CustomerTariffProjection> customer1 = customerService.findCustomerInfo(phone1);
@@ -74,7 +73,7 @@ public class BrtService {
 
 
     private CdrPlusEvent createCdrPlus(CustomerTariffProjection customer, CdrDto cdr) {
-        TariffDto tariffDto = tariffMapper.map(customer);
+        TariffDto tariffDto = customerTariffMapper.map(customer);
 
         return CdrPlusEvent.builder()
                 .cdr(cdr)

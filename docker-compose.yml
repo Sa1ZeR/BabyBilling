@@ -17,3 +17,7 @@ services:
     extends:
       file: docker-compose.storage.yml
       service: redis
+  db:
+    extends:
+      file: docker-compose.storage.yml
+      service: db

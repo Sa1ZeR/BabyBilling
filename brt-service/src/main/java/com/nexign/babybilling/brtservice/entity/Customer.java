@@ -3,23 +3,22 @@ package com.nexign.babybilling.brtservice.entity;
 
 import com.nexign.babybilling.CustomerRole;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Getter
+@Setter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "customer",  indexes = {
-        @Index(name = "phone_index", columnList = "phone")
+        @Index(name = "phone_index", columnList = "msisnd")
 })
 public class Customer {
 
@@ -28,11 +27,17 @@ public class Customer {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String phone;
+    private String msisnd;
 
     @OneToOne()
     @JoinColumn()
     private Tariff tariff;
+
+    @Column(nullable = false)
+    private BigDecimal balance;
+
+    @Column(nullable = false)
+    private String password;
 
     @Enumerated
     private Set<CustomerRole> roles = new HashSet<>();
