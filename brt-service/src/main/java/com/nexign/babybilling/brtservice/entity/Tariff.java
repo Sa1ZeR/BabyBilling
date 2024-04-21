@@ -15,7 +15,7 @@ import java.util.Objects;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tariff")
+@Table(name = "tariffs")
 public class Tariff {
 
     @Id
@@ -23,24 +23,6 @@ public class Tariff {
     private Long id;
 
     private String name;
-
-    @Column(nullable = false)
-    private BigDecimal incomingCallCost;
-
-    @Column(nullable = false)
-    private BigDecimal incomingCallCostOther;
-
-    @Column(nullable = false)
-    private BigDecimal outGoingCallCost;
-
-    @Column(nullable = false)
-    private BigDecimal outGoingCallCostOther;
-
-    @Column(nullable = false)
-    private BigDecimal monthlyCost;
-
-    @Column(nullable = false)
-    private Integer minutes;
 
     @Override
     public final boolean equals(Object o) {

@@ -17,7 +17,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "customer",  indexes = {
+@Table(name = "customers",  indexes = {
         @Index(name = "phone_index", columnList = "msisnd")
 })
 public class Customer {
@@ -29,8 +29,7 @@ public class Customer {
     @Column(nullable = false, unique = true)
     private String msisnd;
 
-    @OneToOne()
-    @JoinColumn()
+    @ManyToOne
     private Tariff tariff;
 
     @Column(nullable = false)
@@ -40,6 +39,8 @@ public class Customer {
     private String password;
 
     @Enumerated
+    @ElementCollection(targetClass = CustomerRole.class)
+    @CollectionTable(name = "customers_to_roles", joinColumns = @JoinColumn(name = "customer_id"))
     private Set<CustomerRole> roles = new HashSet<>();
 
     @Override

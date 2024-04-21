@@ -31,4 +31,8 @@ public class TariffService {
     public List<Tariff> findAll() {
         return tariffRepo.findAll();
     }
+
+    public Tariff save(Tariff tariff) {
+        return tariffRepo.save(tariff);
+    }
 }

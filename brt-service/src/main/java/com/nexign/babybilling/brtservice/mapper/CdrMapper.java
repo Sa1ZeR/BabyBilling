@@ -30,8 +30,8 @@ public class CdrMapper implements Mapper<String, CdrDto> {
 
         return CdrDto.builder()
                 .callType(callType)
-                .phone1(phone1)
-                .phone2(phone2)
+                .servedMsisnd(phone1)
+                .contactedMsisnd(phone2)
                 .dateStart(dateStart)
                 .dateEnd(dateEnd)
                 .build();
