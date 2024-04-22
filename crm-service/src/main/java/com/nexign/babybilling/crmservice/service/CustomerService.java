@@ -4,6 +4,7 @@ import com.nexign.babybilling.domain.Constants;
 import com.nexign.babybilling.payload.dto.CustomerDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,9 @@ public class CustomerService {
      * @param msisnd номер абонента
      * @return dto абонента {@link CustomerDto}
      */
+    @Cacheable(cacheNames = "customerCache", key = "#msisnd", unless = "#result == null")
     public CustomerDto findByMsisnd(String msisnd) {
+        log.info("Try to getting customer {}...", msisnd);
         try {
             ResponseEntity<CustomerDto> response = restTemplate.exchange(String.format(Constants.BRT_SERVICE_URL + "/api/customer/%s", msisnd),
                     HttpMethod.GET, null, CustomerDto.class);
