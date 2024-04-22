@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class KafkaProducerProperty {
 
-    @Value("${spring.kafka.topics.calculation-topic}")
-    public String calcTopic;
+    @Value("${spring.kafka.topics.hrs-topic}")
+    public String hrsTopic;
 }

@@ -21,7 +21,8 @@ spring:
   kafka:
     topics:
       cdr-file-topic: 'cdr-file-topic'
-      calculation-topic: 'calc-topic'
+      hrs-topic: 'hrs-topic'
+      calculation-data-topic: 'calc-data-topic'
       crm-event-topic: 'crm-event-topic'
     producer:
       bootstrap-servers: localhost:9092

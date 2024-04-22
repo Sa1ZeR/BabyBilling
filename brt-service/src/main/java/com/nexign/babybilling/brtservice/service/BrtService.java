@@ -25,7 +25,7 @@ public class BrtService {
     private final CustomerService customerService;
     private final CdrMapper cdrMapper;
     private final CustomerTariffMapper customerTariffMapper;
-    private final KafkaTemplate<Long, CdrPlusEvent> kafkaTemplate;
+    private final KafkaTemplate<String, CdrPlusEvent> kafkaTemplate;
     private final KafkaProducerProperty producerProperty;
 
     /**
@@ -83,7 +83,7 @@ public class BrtService {
 
     public void calculateCustomers(Collection<CdrPlusEvent> list) {
         for(CdrPlusEvent event : list) {
-            kafkaTemplate.send(producerProperty.calcTopic, System.currentTimeMillis(), event);
+            kafkaTemplate.send(producerProperty.hrsTopic, event.cdr().servedMsisnd(), event);
         }
     }
 }

@@ -4,12 +4,14 @@ import com.nexign.babybilling.brtservice.entity.Customer;
 import com.nexign.babybilling.brtservice.repo.CustomerRepo;
 import com.nexign.babybilling.brtservice.repo.projection.CustomerTariffProjection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -59,5 +61,13 @@ public class CustomerService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Customer with %s not found", msisnd));
 
         return customer;
+    }
+
+    /**
+     * Получение всех абонентов
+     * @return список абонентов
+     */
+    public List<Customer> findAll() {
+        return repo.findAll();
     }
 }

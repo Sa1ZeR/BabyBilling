@@ -6,6 +6,8 @@ import com.nexign.babybilling.payload.dto.CustomerDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+
 @Component
 @RequiredArgsConstructor
 public class CustomerMapper implements Mapper<Customer, CustomerDto> {
@@ -16,7 +18,7 @@ public class CustomerMapper implements Mapper<Customer, CustomerDto> {
         return CustomerDto.builder()
                 .msisnd(from.getMsisnd())
                 .balance(from.getBalance())
-                .roles(from.getRoles())
+                .roles(new ArrayList<>(from.getRoles()))
                 .build();
     }
 }
