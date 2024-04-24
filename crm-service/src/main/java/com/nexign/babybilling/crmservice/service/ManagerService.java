@@ -48,8 +48,14 @@ public class ManagerService {
         }
     }
 
+    /**
+     * Отправка события об изменении тарифа
+     * @param request запрос на изменение тарифа
+     */
     public void changeTariff(ChangeTariffRequest request) {
-        //todo cache and check exists user
+        CustomerDto customer = customerService.findByMsisnd(request.msisnd());
+        if(ObjectUtils.isEmpty(customer)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Такой абонент не существует");
+
         try {
             SendResult<String, Object> res = kafkaTemplate.send(producerProperty.crmTopicName, request.msisnd(),
                     ChangeTariffEvent.builder()

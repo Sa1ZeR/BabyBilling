@@ -21,11 +21,13 @@ public class JwtEntryPoint implements AuthenticationEntryPoint {
         String responseJson;
         if(e instanceof BadCredentialsException) {
             responseJson = new Gson().toJson(BaseMessageResponse.builder()
-                            .message("Неверный логин или пароль")
+                    .message("Неверный логин или пароль")
+                    .httpStatus(403)
                     .build());
         } else {
             responseJson = new Gson().toJson(BaseMessageResponse.builder()
                     .message("Доступ запрещен")
+                    .httpStatus(403)
                     .build());
         }
 
