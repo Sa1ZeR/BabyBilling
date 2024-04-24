@@ -7,8 +7,8 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record CallTransactionDto(CallType callType, String phone1,
+public record CallTransactionDto(CallType callType, String servedMsisnd,
                                  @JsonFormat(pattern = "yyy.MM.dd hh:mm:ss") LocalDateTime dateStart,
                                  @JsonFormat(pattern = "yyy.MM.dd hh:mm:ss") LocalDateTime dateEnd,
-                                 String phone2) {
+                                 String contactedMsisnd) {
 }

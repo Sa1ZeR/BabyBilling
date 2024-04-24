@@ -8,8 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface CallTransactionRepo extends JpaRepository<CallTransaction, Long> {
+public interface CallTransactionRepo extends JpaRepository<CallTransaction, Long>, CallTransactionFilter {
 
-    @Query("select tr from CallTransaction tr where tr.firstCustomer = :customer or tr.secondCustomer = :customer")
-    List<CallTransaction> findAllByCustomer(@Param("customer") Customer customer);
 }

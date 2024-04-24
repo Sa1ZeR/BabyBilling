@@ -13,8 +13,8 @@ public class CallTransactionMapper implements Mapper<CallTransaction, CallTransa
                 .callType(from.getCallType())
                 .dateStart(from.getDateStart())
                 .dateEnd(from.getDateEnd())
-                .phone1(from.getFirstCustomer().getPhone())
-                .phone2(from.getSecondCustomer().getPhone())
+                .phone1(from.getServedCustomer().getPhone())
+                .phone2(from.getContactedCustomer().getPhone())
                 .build();
     }
 }
