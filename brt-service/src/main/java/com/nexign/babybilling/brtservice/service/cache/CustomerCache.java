@@ -1,4 +1,4 @@
-package com.nexign.babybilling.brtservice.service;
+package com.nexign.babybilling.brtservice.service.cache;
 
 import com.nexign.babybilling.brtservice.entity.Customer;
 import com.nexign.babybilling.brtservice.mapper.CustomerMapper;

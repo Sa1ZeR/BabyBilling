@@ -3,7 +3,7 @@ package com.nexign.babybilling.brtservice.facade;
 import com.nexign.babybilling.CustomerRole;
 import com.nexign.babybilling.brtservice.entity.Customer;
 import com.nexign.babybilling.brtservice.entity.Tariff;
-import com.nexign.babybilling.brtservice.service.CustomerCache;
+import com.nexign.babybilling.brtservice.service.cache.CustomerCache;
 import com.nexign.babybilling.brtservice.service.CustomerService;
 import com.nexign.babybilling.brtservice.service.TariffService;
 import com.nexign.babybilling.payload.events.ChangeTariffEvent;
@@ -12,7 +12,6 @@ import com.nexign.babybilling.payload.events.CustomerPaymentEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,7 +73,7 @@ public class CustomerFacade {
     public void payment(CustomerPaymentEvent event) {
         Customer customer = customerService.findByMsisnd(event.msisnd());
 
-        customer.setBalance(BigDecimal.valueOf(event.balance()));
+        customer.setBalance(BigDecimal.valueOf(event.amount()));
 
         Customer saved = customerService.save(customer);
         customerCache.updateCustomerCache(saved);

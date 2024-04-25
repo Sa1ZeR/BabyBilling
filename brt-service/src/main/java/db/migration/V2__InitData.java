@@ -24,8 +24,34 @@ public class V2__InitData extends BaseJavaMigration {
                 "79550144220", "79553648563", "79554831095");
 
         Connection connection = context.getConnection();
+        //заполнение фич по стоимости звонокв
+        var tariffCallsSql = """
+                INSERT INTO tariff_call_limits (incoming_call_cost, incoming_call_cost_other,
+                outgoing_call_cost, outgoing_call_cost_other, incoming_call_cost_without_packet, 
+                incoming_call_cost_other_without_packet, outgoing_call_cost_without_packet,
+                outgoing_call_cost_other_without_packet) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """;
+
+        try(var statement = connection.createStatement()) {
+            //классика
+            statement.execute(String.format(tariffCallsSql, 0, 0, 0, 0, 0, 0, 1.5, 2.5));
+        }
+
+        var minutesCallSql = """
+                INSERT INTO tariffs_minutes (minutes, minutes_other, common_minutes) 
+                VALUES (%s, %s, %s)
+                """;
+
+        //заполнение фич с минутами
+        try(var statement = connection.createStatement()) {
+            //помесячный
+            statement.execute(String.format(minutesCallSql, 50, 50, true));
+        }
+
+        //заполнение таблицы тарифов
         var sql = """
-                INSERT INTO tariffs (id, name) VALUES (11, 'Классика'), (12, 'Помесячный')
+                INSERT INTO tariffs (id, name, monthly_cost, tariff_calls_id, tariff_minutes_id) VALUES 
+                (11, 'Классика', 0, 1, null), (12, 'Помесячный', 100, 1, 1), (13, 'Новинка', 75, null, null)
                 """;
         try(var statement = connection.createStatement()) {
             statement.execute(sql);

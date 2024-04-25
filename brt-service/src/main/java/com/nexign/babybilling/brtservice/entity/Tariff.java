@@ -24,6 +24,15 @@ public class Tariff {
 
     private String name;
 
+    @Column(nullable = false)
+    private BigDecimal monthlyCost;
+
+    @ManyToOne()
+    private TariffMinutes tariffMinutes;
+
+    @ManyToOne
+    private TariffCalls tariffCalls;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
