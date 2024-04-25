@@ -67,4 +67,8 @@ public class ManagerService {
             log.error("Error while sending ChangeTariffEvent", e);
         }
     }
+
+    public void createTariff() {
+
+    }
 }
