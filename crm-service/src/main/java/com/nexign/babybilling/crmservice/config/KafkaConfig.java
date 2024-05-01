@@ -21,7 +21,7 @@ public class KafkaConfig {
     private final ProducerProperty producerProperty;
 
     @Bean
-    public NewTopic cdrFileTopic() {
+    public NewTopic crmTopic() {
         return TopicBuilder.name(producerProperty.crmTopicName)
                 .partitions(1)
                 .replicas(Integer.parseInt(producerProperty.syncReplicas))
