@@ -25,4 +25,21 @@ public enum CallType {
         throw new RuntimeException(String.format("CallType with code %s not found!", s));
     }
 
+    /**
+     * Смена типа звонка
+     * @param type тип звонка
+     * @return обновленный тип звонка
+     */
+    public static CallType swapCall(CallType type) {
+        switch (type) {
+            case INCOMING -> {
+                return OUTGOING;
+            }
+            case OUTGOING -> {
+                return INCOMING;
+            }
+        }
+        return type;
+    }
+
 }
