@@ -4,6 +4,20 @@ server:
 spring:
   application:
     name: hrs-service
+  kafka:
+    topics:
+      hrs-topic: 'hrs-topic'
+      calculation-data-topic: 'calc-data-topic'
+    producer:
+      bootstrap-servers: localhost:9092
+      min-insync-replicas: 1
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: "all"
+    consumer:
+      bootstrap-servers: localhost:9092 #список серверов кластера
+      group-id: "cdr-group"
+      trust-packages: "*"
 
 eureka:
   client:
