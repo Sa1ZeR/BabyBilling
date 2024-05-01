@@ -58,7 +58,6 @@ public class RedisLock {
 
             try(Cursor<byte[]> c = redisConnection.keyCommands().scan(options)) {
                 while (c.hasNext()) {
-                    System.out.println(new String(c.next()));
                     redisConnection.keyCommands().del(c.next());
                 }
             }
