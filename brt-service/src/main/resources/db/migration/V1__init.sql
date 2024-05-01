@@ -49,21 +49,27 @@ alter table if exists customers
     foreign key (tariff_id)
     references tariffs;
 
-create table customer_minutes
-(
-    common_minutes boolean   not null,
-    minutes        integer   not null,
-    minutes_other  integer   not null,
-    customer_id    bigint unique,
-    id             bigserial not null,
-    primary key (id)
-);
-
 create table customers_to_roles
 (
     roles       smallint check (roles >= 0),
     customer_id bigint not null
 );
+
+create table customer_call_data
+(
+    minutes       integer   not null,
+    minutes_other integer   not null,
+    month         integer   not null,
+    year          integer   not null,
+    customer_id   bigint,
+    id            bigserial not null,
+    primary key (id)
+);
+
+alter table if exists customer_call_data
+    add constraint FKf48sfdl96ujex80wnnnnihh5p
+    foreign key (customer_id)
+    references customers;
 
 alter table if exists customers_to_roles
     add constraint FK_user_role
@@ -79,8 +85,3 @@ alter table if exists tariffs
     add constraint FKasv2vsbir9wg1h4weud48prjo
     foreign key (tariff_minutes_id)
     references tariffs_minutes;
-
-alter table if exists customer_minutes
-    add constraint FK4ejlu08dws0v4g929cr2hnmno
-    foreign key (customer_id)
-    references customers;

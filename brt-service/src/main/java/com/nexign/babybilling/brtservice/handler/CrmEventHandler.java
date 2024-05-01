@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@KafkaListener(topics = {"${spring.kafka.topics.crm-event-topic}"}, containerFactory = "concurrentKafkaListenerContainerFactory")
+@KafkaListener(topics = {"${spring.kafka.topics.crm-event-topic}"}, containerFactory = "concurrentKafkaJsonListenerContainerFactory")
 public class CrmEventHandler {
 
     private final CustomerFacade customerFacade;

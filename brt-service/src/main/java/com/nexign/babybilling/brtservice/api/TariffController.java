@@ -1,6 +1,5 @@
 package com.nexign.babybilling.brtservice.api;
 
-import com.nexign.babybilling.brtservice.mapper.CustomerTariffMapper;
 import com.nexign.babybilling.brtservice.mapper.TariffMapper;
 import com.nexign.babybilling.brtservice.service.TariffService;
 import com.nexign.babybilling.payload.dto.TariffDto;

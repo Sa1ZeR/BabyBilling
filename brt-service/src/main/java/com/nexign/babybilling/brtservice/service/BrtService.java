@@ -2,20 +2,21 @@ package com.nexign.babybilling.brtservice.service;
 
 import com.nexign.babybilling.brtservice.config.property.KafkaProducerProperty;
 import com.nexign.babybilling.brtservice.mapper.CdrMapper;
-import com.nexign.babybilling.brtservice.mapper.CustomerTariffMapper;
 import com.nexign.babybilling.brtservice.repo.projection.CustomerTariffProjection;
+import com.nexign.babybilling.payload.dto.CallType;
 import com.nexign.babybilling.payload.dto.CdrDto;
 import com.nexign.babybilling.payload.dto.CdrPlusEvent;
-import com.nexign.babybilling.payload.dto.TariffDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -24,7 +25,6 @@ public class BrtService {
 
     private final CustomerService customerService;
     private final CdrMapper cdrMapper;
-    private final CustomerTariffMapper customerTariffMapper;
     private final KafkaTemplate<String, CdrPlusEvent> kafkaTemplate;
     private final KafkaProducerProperty producerProperty;
 
@@ -47,10 +47,7 @@ public class BrtService {
         }
         return Collections.emptyList();
     }
-
-    /**
-     *
-     */
+    
     @Transactional
     public List<CdrPlusEvent> filterCdrData(Collection<CdrDto> data) {
         List<CdrPlusEvent> list = new ArrayList<>();
@@ -64,26 +61,45 @@ public class BrtService {
             Optional<CustomerTariffProjection> customer2 = customerService.findCustomerInfo(phone2);
 
             //преобразовываем полученную информацию
-            customer1.ifPresent(tariffInfo -> list.add(createCdrPlus(tariffInfo, cdr)));
-            customer2.ifPresent(tariffInfo -> list.add(createCdrPlus(tariffInfo, cdr)));
+            //мы должны проверять обе записи, так как бывают случае, что звонки могут быть от разных абонентов (в обе стороны)
+            //для второго абонента мы должны обязательно поменять тип звонка
+            customer1.ifPresent(tariffInfo -> list.add(createCdrPlus(tariffInfo, cdr, cdr.callType(), customer2.isPresent())));
+            customer2.ifPresent(tariffInfo -> list.add(createCdrPlus(tariffInfo, cdr, CallType.swapCall(cdr.callType()), customer1.isPresent())));
         }
 
         return list;
     }
 
-
-    private CdrPlusEvent createCdrPlus(CustomerTariffProjection customer, CdrDto cdr) {
-        TariffDto tariffDto = customerTariffMapper.map(customer);
-
+    /**
+     * Создание CdrPlus
+     * @param customer данные об абоненте вместе с его тарифом
+     * @param cdr cdr запись
+     * @param isSameOperator - одинаковые ли операторы у абонентов
+     * @return CdrPlus запись
+     */
+    private CdrPlusEvent createCdrPlus(CustomerTariffProjection customer, CdrDto cdr, CallType callType, boolean isSameOperator) {
         return CdrPlusEvent.builder()
-                .cdr(cdr)
-                .tariff(tariffDto)
+                .servedMsisnd(customer.getMsisnd())
+                .callType(callType)
+                .dateStart(cdr.dateStart())
+                .dateEnd(cdr.dateEnd())
+                .contactedWithSameOp(isSameOperator)
+                .tariff(customer.getTariff())
                 .build();
     }
 
+    /**
+     * Отправка события на расчет в brt
+     * @param list список cdrplus записейй
+     */
     public void calculateCustomers(Collection<CdrPlusEvent> list) {
         for(CdrPlusEvent event : list) {
-            kafkaTemplate.send(producerProperty.hrsTopic, event.cdr().servedMsisnd(), event);
+            try {
+                SendResult<String, CdrPlusEvent> result = kafkaTemplate.send(producerProperty.hrsTopic, event.servedMsisnd(), event).get();
+                log.info("Successfully sent cdr plus data {}-{}", result.getRecordMetadata().topic(), result.getRecordMetadata().partition());
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Can't send CdrPlus data: ", e);
+            }
         }
     }
 }

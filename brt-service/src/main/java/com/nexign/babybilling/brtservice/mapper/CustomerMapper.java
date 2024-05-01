@@ -12,7 +12,6 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class CustomerMapper implements Mapper<Customer, CustomerDto> {
 
-    private final CustomerTariffMapper customerTariffMapper;
     @Override
     public CustomerDto map(Customer from) {
         return CustomerDto.builder()

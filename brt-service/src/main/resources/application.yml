@@ -1,3 +1,4 @@
+
 spring:
   application:
     name: brt-service
@@ -27,8 +28,8 @@ spring:
     producer:
       bootstrap-servers: localhost:9092
       min-insync-replicas: 1
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
       acks: "all"
     consumer:
       bootstrap-servers: localhost:9092 #список серверов кластера
@@ -46,3 +47,6 @@ eureka:
       defaultZone: 'http://localhost:3000/eureka'
   instance:
     instance-id: ${spring.application.name}:${random.value}
+
+server:
+  port: 3555
