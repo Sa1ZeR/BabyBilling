@@ -48,13 +48,15 @@ public class CustomerFacade {
                 .msisnd(event.msisnd())
                 .roles(Collections.singleton(CustomerRole.DEFAULT))
                 .balance(BigDecimal.valueOf(event.balance()))
-                .password(event.passwrd())
+                .password(event.password())
                 .tariff(tariff)
                 .build();
 
         Customer saved = customerService.save(customer);
         //обновить кэш
         customerCache.updateCustomerCache(saved);
+
+        log.info("Successfully created new customer {}", customer.getMsisnd());
     }
 
     /**
@@ -64,12 +66,13 @@ public class CustomerFacade {
     @Transactional
     public void changeTariff(ChangeTariffEvent event) {
         Tariff tariff = tariffService.findByName(event.tariff());
-        Customer customer = customerService.findByMsisnd(event.tariff());
+        Customer customer = customerService.findByMsisnd(event.msisnd());
 
         customer.setTariff(tariff);
 
         Customer saved = customerService.save(customer);
         customerCache.updateCustomerCache(saved);
+        log.info("Customer {} successfully changed tariff {}", customer.getMsisnd(), customer.getTariff().getName());
     }
 
     /**
@@ -80,10 +83,11 @@ public class CustomerFacade {
     public void payment(CustomerPaymentEvent event) {
         Customer customer = customerService.findByMsisnd(event.msisnd());
 
-        customer.setBalance(BigDecimal.valueOf(event.amount()));
+        customer.setBalance(customer.getBalance().add(BigDecimal.valueOf(event.amount())));
 
         Customer saved = customerService.save(customer);
         customerCache.updateCustomerCache(saved);
+        log.info("Customer {} successfully payed {}", customer.getMsisnd(), event.amount());
     }
 
 
@@ -97,10 +101,9 @@ public class CustomerFacade {
 
         //обновляем время
         if(event.getMinutesAmount() > 0) {
-
             Tariff tariff = customer.getTariff();
             CustomerCall customerCall = customerCallsService.findCustomerCall(customer, event.getYear(), event.getMonth());
-            System.out.println(1111);
+
             if(tariff.getTariffMinutes().isCommonMinutes()) {
                 customerCall.setMinutes(event.getMinutesAmount());
                 customerCall.setMinutesOther(event.getMinutesAmount());

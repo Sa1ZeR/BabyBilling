@@ -57,6 +57,7 @@ public class CustomerService {
      * @param password пароль (в зашифрованном виде)
      * @return Customer
      */
+    @Transactional(readOnly = true)
     public Customer findByMsisndAndPassword(String msisnd, String password) {
         Customer customer = repo.findByMsisnd(msisnd).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Customer with %s not found", msisnd)));

@@ -6,6 +6,7 @@ import com.nexign.babybilling.brtservice.service.CustomerTariffService;
 import com.nexign.babybilling.payload.dto.CustomerDataDto;
 import com.nexign.babybilling.payload.dto.CustomerDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,6 +24,7 @@ public class CustomerController {
     }
 
     @GetMapping("")
+    @Transactional(readOnly = true)
     public CustomerDto findCustomerWithPassword(@RequestParam String msisnd,
                                                 @RequestParam String password) {
         return customerMapper.map(customerService.findByMsisndAndPassword(msisnd, password));

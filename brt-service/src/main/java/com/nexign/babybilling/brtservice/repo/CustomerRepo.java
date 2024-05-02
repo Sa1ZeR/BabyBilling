@@ -20,7 +20,6 @@ public interface CustomerRepo extends JpaRepository<Customer, Long> {
     List<Customer> findAll();
 
     @EntityGraph(attributePaths = {"tariff", "roles"})
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Customer> findByMsisnd(String phone);
 
     @Query("select c.msisnd as msisnd, t.name as tariff from Customer c join c.tariff t where c.msisnd = :phone")

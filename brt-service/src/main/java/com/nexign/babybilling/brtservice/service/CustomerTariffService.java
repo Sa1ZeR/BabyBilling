@@ -22,7 +22,7 @@ public class CustomerTariffService {
      * @param month - месяц
      * @return данные по пользователю
      */
-    @Cacheable(cacheNames = "customerTariff", key = "#msisnd")
+    @Cacheable(cacheNames = "customerTariff", key = "#msisnd", unless = "#result == null")
     public CustomerDataDto findCustomerDataFromCache(String msisnd, Integer year, Integer month) {
         return customerService.findCustomerData(msisnd, year, month);
     }
