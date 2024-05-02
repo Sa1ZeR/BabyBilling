@@ -27,7 +27,7 @@ public class TariffService {
     private final RestTemplate restTemplate;
     private final RedisTemplate<String, TariffDto> redisTemplate;
 
-    @Cacheable(cacheNames = "tariffCache", key = "#name")
+    @Cacheable(cacheNames = "tariffCache", key = "#name", unless = "#result == null")
     public TariffDto findByName(String name) {
         try {
             ResponseEntity<TariffDto> response = restTemplate.exchange(String.format(Constants.BRT_SERVICE_URL + "/api/tariff/%s", name),

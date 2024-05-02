@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/manager/")
-@PreAuthorize(value = "MANAGER")
+@PreAuthorize(value = "hasAuthority('MANAGER')")
 public class ManagerController {
 
     private final ManagerService managerService;

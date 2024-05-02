@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@PreAuthorize(value = "DEFAULT")
+@PreAuthorize(value = "hasAuthority('DEFAULT')")
 @RequestMapping("/api/customer/")
 public class CustomerController {
 

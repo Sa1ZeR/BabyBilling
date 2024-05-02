@@ -26,7 +26,7 @@ public class CustomerService {
      * @param msisnd номер абонента
      * @return данные о звонках, лимитах и прочее
      */
-    @Cacheable(cacheNames = "customerDataCache", key = "#name")
+    @Cacheable(cacheNames = "customerDataCache", key = "#name", unless = "#result == null")
     public CustomerDataDto findCustomerData(String msisnd, int year, int month) {
         try {
             ResponseEntity<CustomerDataDto> response = restTemplate.exchange(String.format(Constants.BRT_SERVICE_URL + "/api/customer/data/%s?year=%s&month=%s", msisnd, year, month),

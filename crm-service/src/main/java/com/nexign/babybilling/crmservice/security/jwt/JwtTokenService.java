@@ -48,7 +48,7 @@ public class JwtTokenService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("misisnd",  customer.msisnd());
 
-        return Jwts.builder()
+        return TOKEN_PREFIX + Jwts.builder()
                 .issuedAt(now)
                 .expiration(expiredTime)
                 .claims(claims)

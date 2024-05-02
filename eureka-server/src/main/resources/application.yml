@@ -11,4 +11,4 @@ eureka:
     service-url:
       defaultZone: 'http://localhost:3000/eureka' #url for publishing microservers
   server:
-    renewal-percent-threshold: 0.85
+    renewal-percent-threshold: 0.15

@@ -34,7 +34,7 @@ public class TariffController {
     }
 
     @PostMapping
-    @PreAuthorize("MANAGER")
+    @PreAuthorize("hasAuthority('MANAGER')")
     public ResponseEntity<String> createTariff() {
         managerService.createTariff();
 

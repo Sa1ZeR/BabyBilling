@@ -58,7 +58,7 @@ public class AuthService {
             SendResult<String, Object> res = kafkaTemplate.send(producerProperty.crmTopicName, request.msisnd(),
                     CreateNewCustomerEvent.builder()
                             .msisnd(request.msisnd())
-                            .passwrd(bCryptPasswordEncoder.encode(request.password()))
+                            .password(bCryptPasswordEncoder.encode(request.password()))
                             .tariff(null) //brt должен будет установить дефолтный тариф
                             .balance(100) //новым пользователям ставим тестовый баланс
                             .build()).get();
