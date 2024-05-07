@@ -17,7 +17,6 @@ public final class CdrCalcedEvent {
     private String msisnd;
     private BigDecimal moneyAmount;
     private Integer minutesAmount; //for subscribe
-    private Integer year;
-    private Integer month;
+    private long unixTime;
 
 }

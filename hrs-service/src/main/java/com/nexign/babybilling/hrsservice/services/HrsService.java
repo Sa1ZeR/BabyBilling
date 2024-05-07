@@ -23,12 +23,9 @@ public class HrsService {
     private final KafkaTemplate<String, CdrCalcedEvent> kafkaTemplate;
 
     public CdrCalcedEvent buildCalced(CdrPlusEvent event) {
-        LocalDateTime localDateTime = TimeUtils.toLocalDateTime(event.dateStart());
-
         return CdrCalcedEvent.builder()
                 .isSameOp(event.contactedWithSameOp())
-                .month(localDateTime.getMonthValue())
-                .year(localDateTime.getYear())
+                .unixTime(event.dateStart())
                 .msisnd(event.servedMsisnd())
                 .moneyAmount(BigDecimal.ZERO)
                 .minutesAmount(0)

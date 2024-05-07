@@ -1,5 +1,6 @@
 package com.nexign.babybilling.utils;
 
+import com.nexign.babybilling.domain.Pair;
 import lombok.experimental.UtilityClass;
 
 import java.time.Instant;
@@ -41,5 +42,15 @@ public class TimeUtils {
      */
     public static LocalDateTime toLocalDateTime(long unix) {
         return LocalDateTime.ofInstant(Instant.ofEpochSecond(unix), ZoneId.systemDefault());
+    }
+
+    /**
+     * Конвертирует время в год - месяц
+     * @param unix время в unix формате
+     * @return Pair, где 1 = год, 2 = месяц
+     */
+    public static Pair<Integer, Integer> toPair(long unix) {
+        LocalDateTime localDateTime = toLocalDateTime(unix);
+        return new Pair<>(localDateTime.getYear(), localDateTime.getMonthValue());
     }
 }

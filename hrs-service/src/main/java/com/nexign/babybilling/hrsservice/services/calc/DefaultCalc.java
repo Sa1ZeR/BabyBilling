@@ -31,8 +31,6 @@ public class DefaultCalc extends TariffCalc {
 
         //только если у абонента есть подписка или какие-либо фичи, в противном случае считает по значениям без подписки
         if(customerData != null) {
-            System.out.println("mega calc");
-
             BigDecimal price = getPrice(cdr, tariff);
             calced.setMoneyAmount(price.multiply(BigDecimal.valueOf(duration)));
 
