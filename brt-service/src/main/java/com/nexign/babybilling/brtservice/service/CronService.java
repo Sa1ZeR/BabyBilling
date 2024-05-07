@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 public class CronService {
 
     private final CustomerService customerService;
+    private final CustomerPaymentsService customerPaymentsService;
 
     @Scheduled(fixedDelay = 5000L)
     @Transactional

@@ -107,4 +107,9 @@ public class CustomerService {
 
         return tariffMapper.map(first.get());
     }
+
+    @Transactional
+    public List<Customer> findAllWithSubTariff() {
+        return repo.findAllWithSubTariff();
+    }
 }

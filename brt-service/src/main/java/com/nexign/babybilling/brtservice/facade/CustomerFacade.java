@@ -5,15 +5,14 @@ import com.nexign.babybilling.brtservice.entity.Customer;
 import com.nexign.babybilling.brtservice.entity.CustomerCall;
 import com.nexign.babybilling.brtservice.entity.Tariff;
 import com.nexign.babybilling.brtservice.repo.CustomerCallsRepo;
-import com.nexign.babybilling.brtservice.service.CustomerCallsService;
-import com.nexign.babybilling.brtservice.service.CustomerTariffService;
+import com.nexign.babybilling.brtservice.service.*;
 import com.nexign.babybilling.brtservice.service.cache.CustomerCache;
-import com.nexign.babybilling.brtservice.service.CustomerService;
-import com.nexign.babybilling.brtservice.service.TariffService;
+import com.nexign.babybilling.domain.Pair;
 import com.nexign.babybilling.payload.events.CdrCalcedEvent;
 import com.nexign.babybilling.payload.events.ChangeTariffEvent;
 import com.nexign.babybilling.payload.events.CreateNewCustomerEvent;
 import com.nexign.babybilling.payload.events.CustomerPaymentEvent;
+import com.nexign.babybilling.utils.TimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -24,17 +23,23 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomerFacade {
+
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(Math.min(6, Runtime.getRuntime().availableProcessors()));
+
     private final CustomerCallsRepo customerCallsRepo;
     private final CustomerTariffService customerTariffService;
     private final CustomerService customerService;
     private final TariffService tariffService;
     private final CustomerCache customerCache;
     private final CustomerCallsService customerCallsService;
+    private final CustomerTimeService timeService;
 
     /**
      * Создание нового абонента
@@ -68,6 +73,13 @@ public class CustomerFacade {
         Tariff tariff = tariffService.findByName(event.tariff());
         Customer customer = customerService.findByMsisnd(event.msisnd());
 
+        //обновим баланс пользователя(мы должны рассчитать его за использование тарифа)
+        //не заносим значение в CustomerPayment за текущий месяц, так как туда кладется только автоматическое снятие
+        BigDecimal monthlyCost = customer.getTariff().getMonthlyCost();
+        if(monthlyCost.compareTo(BigDecimal.ZERO) > 0) {
+            customer.setBalance(customer.getBalance().subtract(monthlyCost));
+        }
+        //смена тарифа
         customer.setTariff(tariff);
 
         Customer saved = customerService.save(customer);
@@ -98,13 +110,14 @@ public class CustomerFacade {
     @Transactional
     public void handleCalcData(CdrCalcedEvent event) {
         Customer customer = customerService.findByMsisnd(event.getMsisnd());
+        Pair<Integer, Integer> date = TimeUtils.toPair(event.getUnixTime());
 
         //обновляем время
         if(event.getMinutesAmount() > 0) {
             Tariff tariff = customer.getTariff();
-            CustomerCall customerCall = customerCallsService.findCustomerCall(customer, event.getYear(), event.getMonth());
+            CustomerCall customerCall = customerCallsService.findCustomerCall(customer, date.first(), date.second());
 
-            if(tariff.getTariffMinutes().isCommonMinutes()) {
+            if(tariff.getTariffMinutes() != null && tariff.getTariffMinutes().isCommonMinutes()) {
                 customerCall.setMinutes(event.getMinutesAmount());
                 customerCall.setMinutesOther(event.getMinutesAmount());
             } else {
@@ -120,9 +133,15 @@ public class CustomerFacade {
             customer.setBalance(customer.getBalance().subtract(event.getMoneyAmount()));
             customerService.save(customer);
         }
-        //обновляем кэш
+        //обновляем кэш c данными
         if(event.getMinutesAmount() > 0)
-            customerTariffService.updateCustomerData(event.getMsisnd(), event.getYear(), event.getMonth());
+            customerTariffService.updateCustomerData(event.getMsisnd(), date.first(), date.second());
+        //расчет по тарифу с игнорированием января
+        if(customer.getTariff().getMonthlyCost().compareTo(BigDecimal.ZERO) > 0)
+            timeService.updateCustomerLastTime(customer, event.getUnixTime());
+
+        //обновление времени последней cdr
+        timeService.updateCommonLastTime(event.getUnixTime());
     }
 
     /**

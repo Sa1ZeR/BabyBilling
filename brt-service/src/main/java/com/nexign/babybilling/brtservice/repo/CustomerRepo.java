@@ -27,4 +27,7 @@ public interface CustomerRepo extends JpaRepository<Customer, Long> {
 
     @Query("select c.msisnd as msisnd, t.name as tariff, t.tariffMinutes.minutes as tarMin, t.tariffMinutes.minutesOther as tarMinOth, cl.minutes as minutes, cl.minutesOther as minutesOther, cl.year as year, cl.month as month from Customer c join c.tariff t join t.tariffMinutes tm left join CustomerCall cl on cl.customer = c where c.msisnd = :msisnd")
     List<CustomerDataProjection> findCustomerData(@Param("msisnd") String msisnd);
+
+    @Query("select c from Customer c where c.tariff.monthlyCost > 0")
+    List<Customer> findAllWithSubTariff();
 }

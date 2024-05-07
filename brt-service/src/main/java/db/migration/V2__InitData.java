@@ -35,6 +35,8 @@ public class V2__InitData extends BaseJavaMigration {
         try(var statement = connection.createStatement()) {
             //классика
             statement.execute(String.format(tariffCallsSql, 0, 0, 0, 0, 0, 0, 1.5, 2.5));
+            //новинка
+            statement.execute(String.format(tariffCallsSql, 0, 0, 0, 0, 0, 0, 0.5, 1.5));
         }
 
         var minutesCallSql = """
@@ -51,7 +53,7 @@ public class V2__InitData extends BaseJavaMigration {
         //заполнение таблицы тарифов
         var sql = """
                 INSERT INTO tariffs (id, name, monthly_cost, tariff_calls_id, tariff_minutes_id) VALUES 
-                (11, 'Классика', 0, 1, null), (12, 'Помесячный', 100, 1, 1), (13, 'Новинка', 75, null, null)
+                (11, 'Классика', 0, 1, null), (12, 'Помесячный', 100, 1, 1), (13, 'Новинка', 75, 2, 1)
                 """;
         try(var statement = connection.createStatement()) {
             statement.execute(sql);

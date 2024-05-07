@@ -66,6 +66,21 @@ create table customer_call_data
     primary key (id)
 );
 
+create table customer_payments
+(
+    month       integer        not null,
+    year        integer        not null,
+    amount      numeric(10, 2) not null,
+    customer_id bigint         not null,
+    id          bigserial      not null,
+    primary key (id)
+);
+
+alter table if exists customer_payments
+    add constraint FKxc521vx929xnd26fu3dr6scf
+    foreign key (customer_id)
+    references customers;
+
 alter table if exists customer_call_data
     add constraint FKf48sfdl96ujex80wnnnnihh5p
     foreign key (customer_id)
