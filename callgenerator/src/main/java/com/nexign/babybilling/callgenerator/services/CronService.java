@@ -48,12 +48,12 @@ public class CronService {
             return;
         }
 
-        timeForBabyBilling.set(timeForBabyBilling.get().plusSeconds(random.nextInt(10800))); //шаг звонков
+        timeForBabyBilling.set(timeForBabyBilling.get().plusSeconds(random.nextInt(3800))); //шаг звонков
         LocalDateTime curDate = timeForBabyBilling.get();
         log.info("Сейчас {}.{}.{}", curDate.getYear(), curDate.getMonth().getValue(), curDate.getDayOfMonth());
 
         //тут определяется сколько пользователей могут зводить в один промежуток времени (с небольшой погрешностью)
-        for (int i = 0; i < random.nextInt(9) + 1; i++) {
+        for (int i = 0; i < random.nextInt(15) + 1; i++) {
             executorService.submit(() ->  {
                 //создание cdr
                 Optional<CdrDto> cdrDto = cdrGeneratorService.generateCdrRecord(timeForBabyBilling.get());
@@ -68,7 +68,7 @@ public class CronService {
                     log.error("Error while generating cdr data", e);
                 }
             });
-            timeForBabyBilling.set(timeForBabyBilling.get().plus(random.nextInt(50), ChronoUnit.MILLIS)); //вычисление погрешности
+            timeForBabyBilling.set(timeForBabyBilling.get().plus(random.nextInt(random.nextInt(50) + 1), ChronoUnit.MILLIS)); //вычисление погрешности
         }
     }
 
