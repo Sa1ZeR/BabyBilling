@@ -47,3 +47,12 @@ eureka:
       defaultZone: 'http://localhost:3000/eureka'
   instance:
     instance-id: ${spring.application.name}:${random.value}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+
