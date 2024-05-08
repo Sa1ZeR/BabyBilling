@@ -1,27 +1,31 @@
 server:
-  port: 3003
+  port: ${SERVER_PORT:3003}
 
 spring:
   application:
     name: hrs-service
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
   kafka:
     topics:
       hrs-topic: 'hrs-topic'
       calculation-data-topic: 'calc-data-topic'
     producer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
       min-insync-replicas: 1
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       acks: "all"
     consumer:
-      bootstrap-servers: localhost:9092 #список серверов кластера
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092} #список серверов кластера
       group-id: "cdr-group"
       trust-packages: "*"
 
 eureka:
   client:
     service-url:
-      defaultZone: 'http://localhost:3000/eureka'
+      defaultZone: ${EUREKA_HOST:http://localhost:3000/eureka}
   instance:
     instance-id: ${spring.application.name}:${random.value}

@@ -21,7 +21,7 @@ public class CallTransactionController {
 
     private final CallTransactionService transactionService;
 
-    @Operation(description = "Получить список транзакций")
+    @Operation(description = "Получить список транзакций (Все параметры опциональны)")
     @GetMapping("all")
     public List<CallTransactionDto> findAll(TransactionFilterRequest request) {
         return transactionService.findByFilter(request);
