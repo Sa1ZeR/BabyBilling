@@ -33,4 +33,16 @@ public class CronService {
             log.info("Пополнен баланс для {} на сумму {}", byMsisnd.getMsisnd(), amount);
         }
     }
+
+
+    @Scheduled(fixedDelay = 5000L)
+    @Transactional
+    public void calcTariffs() {
+        //получение абонентов с тарифами помесячной оплатой
+        List<Customer> customers = customerService.findAllWithSubTariff();
+
+        for (Customer customer : customers) {
+            customerPaymentsService.calcNotPayed(customer);
+        }
+    }
 }

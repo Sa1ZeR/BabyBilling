@@ -69,13 +69,14 @@ public class CustomerPaymentsService {
 
         LocalDateTime dateStart = payment.map(customerPayment -> LocalDateTime.of(customerPayment.getYear(), customerPayment.getMonth(), 1, 1, 0))
                 .orElseGet(() -> LocalDateTime.of(2024, 1, 1, 1, 0));
-        LocalDateTime dateEnd = LocalDateTime.of(commonDate.first(), Math.max(1, count > 5 ? commonDate.second() : commonDate.second()-1), 1, 0, 0);
+        LocalDateTime dateEnd = LocalDateTime.of(commonDate.first(), Math.max(1, count > 5 ? commonDate.second() : commonDate.second()-1), 2, 0, 0);
 
+        log.info("Расчет по {}", dateEnd);
         //для каждого незаполненного месяца создаем оплату (Январь исключаем)
         if(dateEnd.getMonthValue() > 1) {
             while (dateStart.isBefore(dateEnd)) {
-                System.out.println(dateStart);
-                System.out.println(dateEnd);
+                Optional<CustomerPayment> trueCheck = repo.findByCustomerAndYearAndMonth(customer, dateStart.getYear(), dateStart.getMonthValue());
+                if(trueCheck.isEmpty()) {
                     //обновление баланса
                     BigDecimal monthlyCost = customer.getTariff().getMonthlyCost();
                     customer.setBalance(customer.getBalance().subtract(monthlyCost));
@@ -90,8 +91,9 @@ public class CustomerPaymentsService {
                             .amount(monthlyCost)
                             .build());
 
-                    log.info("Оплата тарифа за {}.{}, сумма {}", dateStart.getYear(), dateStart.getMonth().getValue(), monthlyCost);
-                    dateStart = dateStart.plusMonths(1);
+                    log.info("{}: Оплата тарифа за {}.{}, сумма {}", customer.getMsisnd(), dateStart.getYear(), dateStart.getMonth().getValue(), monthlyCost);
+                }
+                dateStart = dateStart.plusMonths(1);
             }
         }
     }
