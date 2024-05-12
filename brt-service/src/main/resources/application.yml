@@ -36,6 +36,7 @@ spring:
       cdr-generator-topic-name: "cdr-generator-topic"
       group-id: "cdr-group"
       trust-packages: "*"
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
   data:
     redis:
       host: ${REDIS_HOST:localhost}

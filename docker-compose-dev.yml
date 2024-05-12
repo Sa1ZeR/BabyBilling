@@ -1,9 +1,9 @@
 version: '3.9'
 services:
-  kafka-1:
+  kafka:
     extends:
       file: docker-compose.kafka-cluster.yml
-      service: kafka-1
+      service: kafka
 #  kafka-2:
 #    extends:
 #      file: docker-compose.kafka-cluster.yml

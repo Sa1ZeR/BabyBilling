@@ -22,6 +22,7 @@ spring:
       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092} #список серверов кластера
       group-id: "cdr-group"
       trust-packages: "*"
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
 
 eureka:
   client:

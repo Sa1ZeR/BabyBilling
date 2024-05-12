@@ -13,6 +13,7 @@ spring:
       cdr-generator-topic-name: "cdr-generator-topic"
       acks: 1 #только лидер
       min-insync-replicas: 0 # -1 от-ва серверов кластере
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
   data:
     redis:
       host: ${REDIS_HOST:localhost}

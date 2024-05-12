@@ -32,12 +32,4 @@ public class TariffController {
     public List<TariffDto> all() {
         return tariffFacade.findAll();
     }
-
-    @PostMapping
-    @PreAuthorize("hasAuthority('MANAGER')")
-    public ResponseEntity<String> createTariff() {
-        managerService.createTariff();
-
-        return ResponseEntity.ok("Тариф успешно создан");
-    }
 }

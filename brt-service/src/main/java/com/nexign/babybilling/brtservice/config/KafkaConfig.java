@@ -41,7 +41,7 @@ public class KafkaConfig {
     @Bean
     public <K, V> ProducerFactory<K, V> producerFactory() {
         Map<String, Object> map = new HashMap<>();
-
+;
         map.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProducerProperty.bootstrapServers);
         map.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, kafkaProducerProperty.deserializationKeyClass);
         map.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, kafkaProducerProperty.deserializationValueClass);

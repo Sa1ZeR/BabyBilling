@@ -1,23 +1,181 @@
 version: '3.9'
+
+networks:
+  baby:
+    driver: bridge
+
 services:
-  kafka-1:
+  kafka:
+    networks:
+      - baby
     extends:
       file: docker-compose.kafka-cluster.yml
-      service: kafka-1
-#  kafka-2:
-#    extends:
-#      file: docker-compose.kafka-cluster.yml
-#      service: kafka-2
-#  kafka-3:
-#    extends:
-#      file: docker-compose.kafka-cluster.yml
-#      service: kafka-3
+      service: kafka
 
   redis:
+    networks:
+      - baby
     extends:
       file: docker-compose.storage.yml
       service: redis
   db:
+    networks:
+      - baby
     extends:
       file: docker-compose.storage.yml
       service: db
+  #сервисы
+  eureka:
+    container_name: eureka
+    image: sa1zer/babybilling_eureka:v1
+    networks:
+      - baby
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: "curl --fail --silent localhost:3000/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  gateway:
+    container_name: gateway
+    image: sa1zer/babybilling_gateway:v1
+    networks:
+      - baby
+    ports:
+      - "5000:5000"
+    environment:
+      EUREKA_HOST: 'http://eureka:3000/eureka'
+    depends_on:
+      eureka:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:5000/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  callgen:
+    container_name: callgen
+    image: sa1zer/babybilling_callgen:v1
+    ports:
+      - "3007:3007"
+    networks:
+      - baby
+    environment:
+      EUREKA_HOST: 'http://eureka:3000/eureka'
+      KAFKA_BOOTSTRAP_SERVERS: 'kafka:9092'
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      gateway:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:3007/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  cdr:
+    container_name: cdr
+    image: sa1zer/babybilling_cdr:v1
+    ports:
+      - "3001:3001"
+    networks:
+      - baby
+    environment:
+      EUREKA_HOST: 'http://eureka:3000/eureka'
+      KAFKA_BOOTSTRAP_SERVERS: 'kafka:9092'
+      CUSTOM_SPRING_PROFILES: default #есть доп профиль dev
+    depends_on:
+      gateway:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:3001/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  brt-service:
+    container_name: brt
+    image: sa1zer/babybilling_brt:v1
+    ports:
+      - "3002:3002"
+    networks:
+      - baby
+    environment:
+      EUREKA_HOST: 'http://eureka:3000/eureka'
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: bootcamp24
+      POSTGRES_NAME: postgres
+      POSTGRES_PASSWORD: 123456
+    depends_on:
+      gateway:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:3002/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  hrs:
+    container_name: hrs
+    image: sa1zer/babybilling_hrs:v1
+    ports:
+      - "3003:3003"
+    networks:
+      - baby
+    environment:
+      EUREKA_HOST: 'http://eureka:3000/eureka'
+      KAFKA_BOOTSTRAP_SERVERS: 'kafka:9092'
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      gateway:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      brt-service:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:3007/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  crm:
+    container_name: crm
+    image: sa1zer/babybilling_crm:v1
+    ports:
+      - "3004:3004"
+    networks:
+      - baby
+    environment:
+      EUREKA_HOST: 'http://eureka:3000/eureka'
+      KAFKA_BOOTSTRAP_SERVERS: 'kafka:9092'
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      gateway:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      brt-service:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:3007/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s

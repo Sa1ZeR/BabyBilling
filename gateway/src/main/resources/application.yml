@@ -1,5 +1,6 @@
 server:
   port: ${SERVER_PORT:5000}
+  max-http-request-header-size: 9999999KB
 spring:
   application:
     name: gateway
@@ -32,7 +33,7 @@ springdoc:
       enabled: true
     enabled: true
   swagger-ui:
-    path: /swagger-ui/index.html
+    path: /swagger/index.html
     enabled: true
     urls:
       - url: /crm-service/v3/api-docs

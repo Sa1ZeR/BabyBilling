@@ -2,6 +2,8 @@ server:
   port: ${SERVER_PORT:3001}
 
 spring:
+  profiles:
+    active: ${CUSTOM_SPRING_PROFILES:default}
   application:
     name: cdr-service
 
@@ -37,6 +39,7 @@ spring:
       #key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
       group-id: "cdr-group"
       trust-packages: "*"
+    #bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
   data:
     redis:
       host: localhost
