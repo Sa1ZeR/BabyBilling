@@ -22,7 +22,13 @@ repositories {
 }
 
 dependencies {
+	implementation project(':common-lib')
 	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation ('org.springframework.boot:spring-boot-starter-data-redis') {
+		exclude group: 'io.lettuce.lettuce-core'
+	}
+	implementation 'com.github.houbb:redis-client-jedis:0.0.3'
+	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.apache.kafka:kafka-streams'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

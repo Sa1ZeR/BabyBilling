@@ -1,0 +1,29 @@
+version: '3.9'
+services:
+  redis:
+    image: redis:7.2.4
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+  db:
+    image: postgres:15.2-alpine
+    container_name: 'postgre'
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data1/pgdata/ #save information from container to localstorage
+    user: postgres
+    environment:
+      POSTGRES_DB: bootcamp24
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: [ "CMD", "pg_isready","-d","bootcamp24","-U","postgres" ]
+      interval: 5s
+      timeout: 1s
+      retries: 5
+    restart: always

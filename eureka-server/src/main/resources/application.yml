@@ -1,0 +1,14 @@
+server:
+  port: ${SERVER_PORT:3000}
+
+spring:
+  application:
+    name: eureka-server
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: ${EUREKA_HOST:http://localhost:3000/eureka} #url for publishing microservers
+  server:
+    renewal-percent-threshold: 0.15

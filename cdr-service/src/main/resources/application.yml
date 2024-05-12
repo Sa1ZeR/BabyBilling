@@ -1,0 +1,62 @@
+server:
+  port: ${SERVER_PORT:3001}
+
+spring:
+  profiles:
+    active: ${CUSTOM_SPRING_PROFILES:default}
+  application:
+    name: cdr-service
+
+  jpa:
+    hibernate:
+      ddl-auto: update #потому что тестовая бд
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 50
+    open-in-view: false
+    #локальная база, поэтому не выносим параметры глобально
+    datasource:
+      url: jdbc:h2:mem:cdr;
+      driverClassName: org.h2.Driver
+      username: Sa1ZeR
+      password:
+
+  kafka:
+    producer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+      cdr-file-topic: 'cdr-file-topic'
+      min-insync-replicas: 1
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      acks: "all"
+    consumer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092} #список серверов кластера
+      cdr-generator-topic-name: "cdr-generator-topic"
+      #value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      #key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      group-id: "cdr-group"
+      trust-packages: "*"
+    #bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_HOST:http://localhost:3000/eureka}
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+

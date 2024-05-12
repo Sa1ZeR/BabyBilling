@@ -2,3 +2,10 @@ rootProject.name = 'BabyBilling'
 
 include('callgenerator')
 include('cdr-service')
+include 'common-lib'
+include 'hrs-service'
+include 'brt-service'
+include 'eureka-server'
+include 'crm-service'
+include 'gateway'
+

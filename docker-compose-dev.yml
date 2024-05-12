@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  kafka:
+    extends:
+      file: docker-compose.kafka-cluster.yml
+      service: kafka
+#  kafka-2:
+#    extends:
+#      file: docker-compose.kafka-cluster.yml
+#      service: kafka-2
+#  kafka-3:
+#    extends:
+#      file: docker-compose.kafka-cluster.yml
+#      service: kafka-3
+
+  redis:
+    extends:
+      file: docker-compose.storage.yml
+      service: redis
+  db:
+    extends:
+      file: docker-compose.storage.yml
+      service: db

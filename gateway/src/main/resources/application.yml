@@ -1,0 +1,42 @@
+server:
+  port: ${SERVER_PORT:5000}
+  max-http-request-header-size: 9999999KB
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      httpserver:
+        wiretap: true
+      httpclient:
+        wiretap: true
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: openapi
+          uri: http://localhost:${server.port}
+          predicates:
+            - Path=/swagger-ui/**,/swagger-resources/**,/swagger-ui.html,/v2/api-docs,/webjars/**,/view/**
+          filters:
+            - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_HOST:http://localhost:3000/eureka} #url for publishing microservers
+
+springdoc:
+  api-docs:
+    groups:
+      enabled: true
+    enabled: true
+  swagger-ui:
+    path: /swagger/index.html
+    enabled: true
+    urls:
+      - url: /crm-service/v3/api-docs
+        name: CRM service
+      - url: /cdr-service/v3/api-docs
+        name: CDR service

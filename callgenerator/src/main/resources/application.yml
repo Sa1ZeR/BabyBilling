@@ -1,0 +1,27 @@
+server:
+  port: ${SERVER_PORT:3007}
+
+spring:
+  application:
+    name: callgenerator
+
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092} #список серверов кластера
+      cdr-generator-topic-name: "cdr-generator-topic"
+      acks: 1 #только лидер
+      min-insync-replicas: 0 # -1 от-ва серверов кластере
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_HOST:http://localhost:3000/eureka}
+  instance:
+    instance-id: ${spring.application.name}:${random.value}

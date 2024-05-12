@@ -1,0 +1,35 @@
+server:
+  error:
+    include-message: always
+  port: ${SERVER_PORT:3004}
+
+spring:
+  application:
+    name: crm-service
+
+  kafka:
+    producer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+      crm-event-topic: 'crm-event-topic'
+      min-insync-replicas: 1
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: "all"
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+jwt:
+  duration: 86400 #в секундах
+
+security:
+  cors-ip: localhost:${server.port}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_HOST:http://localhost:3000/eureka}
+  instance:
+    instance-id: ${spring.application.name}:${random.value}

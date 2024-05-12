@@ -1,36 +1,28 @@
-version: '3'
+version: '3.9'
 services:
-  zoo1:
-    container_name: zoo1
-    image: 'docker.io/bitnami/zookeeper:3.9'
-    hostname: zoo1
-    ports:
-      - "2181:2181"
-    environment:
-      - ZOO_SERVER_ID=1
-      - ZOO_ENABLE_AUTH=yes
-      #- ALLOW_ANONYMOUS_LOGIN=yes
-      - ZOO_MAX_CLIENT_CNXNS=0
-      #- ZOO_DATA_LOG_DIR=logs
-      - ZOO_SERVERS=server.1=zoo1:2181:2181 #можно добавлять список серверов для кластера
-    volumes:
-      - "./zoo1-data:/bitnami/zookeeper"
-    restart: always
-
-  kafka1:
-    container_name: kafka1
-    image: docker.io/bitnami/kafka:3.3
-    hostname: kafka1
+  kafka:
+    container_name: kafka
+    image: bitnami/kafka:latest
     ports:
       - "9092:9092"
+      - "9091:9091"
+      - "9090:9090"
     environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zoo1:2181
-      - KAFKA_CFG_BROKER_ID=1
+      #- KAFKA_CFG_BROKER_ID=1
       - KAFKA_CFG_NODE_ID=1
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_KRAFT_CLUSTER_ID=PVjHlx7ESeHesq55jeB6Ef #должен быть одинаковый для всех серверов кластера
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker #controller - работа с метаданными #brocker - работа с сообщениями
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9091 #список контроллеров
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9090,EXTERNAL://:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
     volumes:
-      - "./kafka1-data:/bitnami/kafka"
+      - "./kafka-1:/bitnami/kafka"
     restart: always
-    depends_on:
-      - zoo1
+    healthcheck:
+      test: kafka-topics.sh --list --bootstrap-server localhost:9092 || exit 1
+      interval: 1s
+      timeout: 60s
+      retries: 60
