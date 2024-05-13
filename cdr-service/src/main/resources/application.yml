@@ -39,11 +39,11 @@ spring:
       #key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
       group-id: "cdr-group"
       trust-packages: "*"
-    #bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
 eureka:
   client:
